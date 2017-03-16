@@ -51,6 +51,11 @@ public class Card {
         }
     }
 
+    /**
+     *
+     * @param c the Card to compare with
+     * @ if the Card is higher than C
+     */
     public boolean compareSuitTo(Card c) {
         if (this.getSuit() > c.getSuit()
                 || (this.getSuit() == c.getSuit()
@@ -61,6 +66,7 @@ public class Card {
             return false;
         }
     }
+
 
     public String toString() {
         String ans = "";
