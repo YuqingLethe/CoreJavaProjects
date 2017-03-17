@@ -43,8 +43,6 @@ public class PokerHand {
         return this.rank;
     }
 
-
-
     /**
      * Evaluate the rank of the five-card hand, and build the evalHand card array to compare the rank
      * @return the Card array to evalHand
@@ -93,7 +91,6 @@ public class PokerHand {
             if (sortedHandByNumber[firstPairIndex].getNumber() == sortedHandByNumber[secondPairIndex].getNumber()) {
                 rank = 8;
             } else {
-                //Two conditions of the full house
                 if (firstPairIndex == 1
                     && secondPairIndex == 3
                     && sortedHandByNumber[secondPairIndex].getNumber()
@@ -158,14 +155,15 @@ public class PokerHand {
                 rank = 10;
             }
 
+            //High Card
             if (rank == 1) {
                 evalHand = duplicateHand(sortedHandByNumber);
             }
             return evalHand;
         }
 
-        //Get the rest cards in evalHand based on cardHM
-        if (rank != 7 && rank != 1) {
+        //Get the rest cards in evalHand
+        if (rank != 7) {
             int beginIndex = 0;
             if (rank == 2) beginIndex = 2;
             if (rank == 3 || rank == 8) beginIndex = 4;
@@ -178,6 +176,7 @@ public class PokerHand {
             }
         }
         evalHand = duplicateHand(sortedHandByNumber);
+
         return evalHand;
     }
 
@@ -312,7 +311,7 @@ public class PokerHand {
         Card[] ca = new Card[5];
         ca[0] = new Card(13, 2);
         ca[1] = new Card(11, 4);
-        ca[2] = new Card(14, 2);
+        ca[2] = new Card(4, 2);
         ca[3] = new Card(10, 4);
         ca[4] = new Card(12, 1);
         PokerHand ph1 = new PokerHand(ca[0], ca[1], ca[2], ca[3], ca[4]);
