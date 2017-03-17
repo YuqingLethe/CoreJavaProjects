@@ -330,5 +330,81 @@ public class PokerHand {
         System.out.println(ph2.evalToString());
         System.out.println(ph1.compareTo(ph2));
 
+
+
+        Card[] manyca = new Card[10];
+        manyca[0] = new Card(13, 2);
+        manyca[1] = new Card(11, 4);
+        manyca[2] = new Card(4, 2);
+        manyca[3] = new Card(10, 4);
+        manyca[4] = new Card(12, 1);
+        manyca[5] = new Card(12, 4);
+        manyca[6] = new Card(12, 2);
+        manyca[7] = new Card(12, 3);
+        manyca[8] = new Card(4, 1);
+        manyca[9] = new Card(11, 1);
+
+        PokerHand ph3 = new PokerHand(caa);
+
+        int[] tmp = ph3.advSortByNumber(manyca);
+
+    }
+
+    public Card[] findBestHand() {
+        int len = this.hand.length;
+
+        Card[] sortedHandBySuit = duplicateHand(this.hand);
+        this.sortBySuit(sortedHandBySuit);
+
+        for (int i = 0; i + 4 < len; i = i + 4) {
+            if (sortedHandBySuit[i].getSuit() == sortedHandBySuit[i].getSuit()
+                && sortedHandBySuit[i].getNumber() - 4 == sortedHandBySuit[i].getNumber()) {
+                rank = 9;
+            }
+        }
+
+        Card[] sortedHandByNumber = duplicateHand(this.hand);
+        this.sortByNumber(sortedHandByNumber);
+
+        return sortedHandByNumber;
+    }
+
+    /**
+     * Sort the card array by number, return the sort report array. <p>
+     * The index of the array is the number (rank) shown on the card, from 2 to 14;<p>
+     * the value of the array is the appearance frequency, from 0 to 4;
+     * @param ca the Card array to be sorted
+     * @return the integer array indicate how many cards of the same rank
+     */
+    public int[] advSortByNumber(Card[] ca) {
+        this.sortByNumber(ca);
+        int len = ca.length;
+        int[] ans = new int[15];
+
+        for (int i = 0; i < len; i++) {
+            ans[ca[i].getNumber()]++;
+        }
+
+        for (int i = 0; i < 15; i++) {
+            System.out.println(i + " " + ans[i]);
+        }
+        return ans;
+    }
+
+    /**
+     * Sort the card array by suit, return the sort report array. <p>
+     * The index of the array is the suit shown on the card, from 1 to 4;<p>
+     * the value of the array is the appearance frequency, from 0 to 13;
+     * @param ca the card array to be sorted
+     * @return the integer array indicating how many cards are in the same suit
+     */
+    public int[] advSortBySuit(Card[] ca) {
+        this.sortBySuit(ca);
+        int len = ca.length;
+        int[] ans = new int[5];
+        for (int i = 0; i < len; i++) {
+            ans[ca[i].getSuit()]++;
+        }
+        return ans;
     }
 }
