@@ -28,55 +28,22 @@ public class PokerHand {
     }
 
     /**
-     * Use the selection sort to sort the cards by numbers, in descending order.
-     * @param ca the Card array to be sorted
+     * Get the evalHand card array with the ranking evaluation order
+     * @return the card array evalHand
      */
-    private void sortByNumber(Card[] ca) {
-        int len = ca.length;
-        for (int i = 0; i < len - 1; i++) {
-            int maxIndex = i;
-            for (int j = i + 1; j < len; j++) {
-                if (ca[j].compareNumberTo(ca[maxIndex]))
-                    maxIndex = j;
-            }
-            Card tmp = ca[i];
-            ca[i] = ca[maxIndex];
-            ca[maxIndex] = tmp;
-        }
+    public Card[] getEvalHand() {
+        return this.evalHand;
     }
 
     /**
-     * Use the selection sort to sort the cards by suits, in descending order.
-     * @param ca the Card array to be sorted
+     * Get the rank order, from 1 High Card to 10 Royal Straight
+     * @return the integer indicating the rank
      */
-    private void sortBySuit(Card[] ca) {
-        int len = ca.length;
-        for (int i = 0; i < len; i++) {
-            int maxIndex = i;
-            for (int j = i + 1; j < len; j++) {
-                if (ca[j].compareSuitTo(ca[maxIndex]))
-                    maxIndex = j;
-            }
-            Card tmp = ca[i];
-            ca[i] = ca[maxIndex];
-            ca[maxIndex] = tmp;
-        }
+    public int getRank() {
+        return this.rank;
     }
 
 
-    /**
-     * Helper method to copy the Card array
-     * @param c the card array to be copied
-     * @return the new card array
-     */
-    private Card[] duplicateHand (Card[] c) {
-        int len = c.length;
-        Card[] newHand = new Card[len];
-        for (int i = 0; i < len; i++) {
-            newHand[i] = c[i];
-        }
-        return newHand;
-    }
 
     /**
      * Evaluate the rank of the five-card hand, and build the evalHand card array to compare the rank
@@ -214,26 +181,11 @@ public class PokerHand {
         return evalHand;
     }
 
-    /**
-     * Get the evalHand card array with the ranking evaluation order
-     * @return the card array evalHand
-     */
-    public Card[] getEvalHand() {
-        return this.evalHand;
-    }
-
-    /**
-     * Get the rank order, from 1 High Card to 10 Royal Straight
-     * @return the integer indicating the rank
-     */
-    public int getRank() {
-        return this.rank;
-    }
 
     /**
      * Compare the ranking between this PokerHand with the argument one.
      * @param ph the PokerHand to compare with
-     * @return 1 if this PokerHand is greater than the argument; return -1 if less; return 0 if equals.
+     * @return 1 if this PokerHand is greater than the argument; return -1 if less; return 0 if equal.
      */
     public int compareTo(PokerHand ph) {
         int arguRank = ph.getRank();
@@ -255,7 +207,12 @@ public class PokerHand {
         }
     }
 
+    /***************************** Print Methods ****************************/
 
+    /**
+     * Output the Card array in the original order
+     * @return the string of all cards
+     */
     public String toString() {
         String ans = "";
         for (int i = 0; i < 5; i++) {
@@ -264,6 +221,11 @@ public class PokerHand {
         return ans;
     }
 
+    /**
+     * Output the rank result
+     * @param rank the rank code from 1 High Card to 10 Royal Flush
+     * @return the rank name in String
+     */
     public String rankToString(int rank) {
         switch (this.rank) {
             case 1: return "High Card      ";
@@ -280,6 +242,10 @@ public class PokerHand {
         }
     }
 
+    /**
+     * Output the result of rank evaluation.
+     * @return the rank name and the cards in evaluation order
+     */
     public String evalToString() {
         String ans = rankToString(this.rank) + " : ";
         for (int i = 0; i < 5; i++) {
@@ -288,21 +254,75 @@ public class PokerHand {
         return ans;
     }
 
+    /***************************** Helper Methods ****************************/
+
+    /**
+     * Use the selection sort to sort the cards by numbers, in descending order.
+     * @param ca the Card array to be sorted
+     */
+    private void sortByNumber(Card[] ca) {
+        int len = ca.length;
+        for (int i = 0; i < len - 1; i++) {
+            int maxIndex = i;
+            for (int j = i + 1; j < len; j++) {
+                if (ca[j].compareNumberTo(ca[maxIndex]))
+                    maxIndex = j;
+            }
+            Card tmp = ca[i];
+            ca[i] = ca[maxIndex];
+            ca[maxIndex] = tmp;
+        }
+    }
+
+    /**
+     * Use the selection sort to sort the cards by suits, in descending order.
+     * @param ca the Card array to be sorted
+     */
+    private void sortBySuit(Card[] ca) {
+        int len = ca.length;
+        for (int i = 0; i < len; i++) {
+            int maxIndex = i;
+            for (int j = i + 1; j < len; j++) {
+                if (ca[j].compareSuitTo(ca[maxIndex]))
+                    maxIndex = j;
+            }
+            Card tmp = ca[i];
+            ca[i] = ca[maxIndex];
+            ca[maxIndex] = tmp;
+        }
+    }
+
+
+    /**
+     * Helper method to copy the Card array
+     * @param c the card array to be copied
+     * @return the new card array
+     */
+    private Card[] duplicateHand (Card[] c) {
+        int len = c.length;
+        Card[] newHand = new Card[len];
+        for (int i = 0; i < len; i++) {
+            newHand[i] = c[i];
+        }
+        return newHand;
+    }
+
+
     public static void main(String[] args) {
         Card[] ca = new Card[5];
         ca[0] = new Card(13, 2);
-        ca[1] = new Card(5, 4);
+        ca[1] = new Card(11, 4);
         ca[2] = new Card(14, 2);
-        ca[3] = new Card(7, 4);
+        ca[3] = new Card(10, 4);
         ca[4] = new Card(12, 1);
         PokerHand ph1 = new PokerHand(ca[0], ca[1], ca[2], ca[3], ca[4]);
 
         Card[] caa = new Card[5];
-        caa[0] = new Card(13, 3);
-        caa[1] = new Card(8, 1);
+        caa[0] = new Card(3, 3);
+        caa[1] = new Card(2, 1);
         caa[2] = new Card(14, 2);
-        caa[3] = new Card(8, 2);
-        caa[4] = new Card(12, 2);
+        caa[3] = new Card(4, 2);
+        caa[4] = new Card(5, 2);
         PokerHand ph2 = new PokerHand(caa);
 
         System.out.println(ph1.toString());
