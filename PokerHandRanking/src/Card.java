@@ -91,16 +91,16 @@ public class Card {
         }
         switch(this.getSuit()) {
             case 1:
-                ans += " Hearts";
+                ans += "Hearts  ";
                 break;
             case 2:
-                ans += " Clubs";
+                ans += "Clubs   ";
                 break;
             case 3:
-                ans += " Diamonds";
+                ans += "Diamonds";
                 break;
             case 4:
-                ans += " Spades";
+                ans += "Spades  ";
                 break;
         }
         return ans;
