@@ -1,17 +1,10 @@
-import jdk.nashorn.internal.parser.JSONParser;
 import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import java.io.FileReader;
-import java.io.IOError;
-import java.io.Reader;
 
-import static java.lang.System.out;
-import static sun.management.Agent.error;
 
 public class Game {
-    public void fiveCard (JSONArray ja) {
-
-
+    public String fiveCard (JSONArray ja) {
+        PokerHand ph = this.jsonArrayToPokerHand(ja);
+        return ph.evalToString();
     }
 
     public PokerHand jsonArrayToPokerHand(JSONArray ja) {
@@ -39,7 +32,7 @@ public class Game {
                         case 'Q':
                             num = 12;
                             break;
-                        case 'k':
+                        case 'K':
                             num = 13;
                             break;
                         case 'A':
@@ -76,9 +69,11 @@ public class Game {
 
     public static void main(String[] args) {
 //        JSONArray ja = new JSONArray()["JH", "4C", "4S", "JC", "9H"];
-        JSONArray ja2 = new JSONArray();
-        ja2.add("JH");
-        ja2.add("4C");
-        System.out.println(ja2.toString());
+        TestData td = new TestData();
+        JSONArray ja1 = td.getJsonArray1();
+        System.out.println(ja1.toString());
+
+        Game g  = new Game();
+        System.out.println(g.fiveCard(ja1));
     }
 }

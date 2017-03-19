@@ -32,6 +32,16 @@ public class TestData {
     }
 
 
+    public JSONArray getJsonArray1() {
+        JSONArray ja = new JSONArray();
+        ja.add("KC");
+        ja.add("JS");
+        ja.add("4C");
+        ja.add("10S");
+        ja.add("QH");
+        return ja;
+    }
+
     public Card[] getCardArray1() {
         Card[] ca = new Card[5];
         ca[0] = new Card(13, 2);
