@@ -354,12 +354,11 @@ public class PokerHand {
         int len = this.hand.length;
 
         Card[] sortedHandBySuit = duplicateHand(this.hand);
-        this.sortBySuit(sortedHandBySuit);
+        int[] suitTable = this.advSortBySuit(sortedHandBySuit);
 
-        for (int i = 0; i + 4 < len; i = i + 4) {
-            if (sortedHandBySuit[i].getSuit() == sortedHandBySuit[i].getSuit()
-                && sortedHandBySuit[i].getNumber() - 4 == sortedHandBySuit[i].getNumber()) {
-                rank = 9;
+        for (int i = 1; i < 5; i++) {
+            if (suitTable[i] >= 5) {
+
             }
         }
 
