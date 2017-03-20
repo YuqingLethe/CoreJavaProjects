@@ -192,5 +192,53 @@ public class GameTest {
         String exp = td.getPokerHand3().evalToString();
         assertEquals("returnBestFiveCardHand() test ", exp, ans);
     }
+    @Test
+    public void returnBestFiveCardHand_RoyalFlush_Test() throws Exception {
+        JSONArray ja = new JSONArray();
+        ja.add("AH");
+        ja.add("QH");
+        ja.add("KS");
+        ja.add("JC");
+        ja.add("10H");
+        ja.add("AS");
+        ja.add("QS");
+        ja.add("KH");
+        ja.add("JH");
+        ja.add("10S");
+
+        Game g  = new Game();
+        String ans = g.returnBestFiveCardHand(ja);
+        System.out.println(ans);
+    }
+
+    @Test
+    public void returnBestFiveCardHand_Straight_Test() throws Exception {
+        JSONArray ja = new JSONArray();
+        ja.add("AH");
+        ja.add("QH");
+        ja.add("KS");
+        ja.add("JC");
+        ja.add("10H");
+
+        Game g  = new Game();
+        String ans = g.returnBestFiveCardHand(ja);
+        System.out.println(ans);
+    }
+
+    @Test
+    public void returnBestFiveCardHand_ThreeKind_Test() throws Exception {
+        JSONArray ja = new JSONArray();
+        //"3H", "7S", "3S", "QD", "AH", "3D", "4S"
+        ja.add("3H");
+        ja.add("7S");
+        ja.add("3S");
+        ja.add("QD");
+        ja.add("AH");
+        ja.add("3D");
+        ja.add("4S");
+        Game g  = new Game();
+        String ans = g.returnBestFiveCardHand(ja);
+        System.out.println(ans);
+    }
 
 }
