@@ -13,9 +13,6 @@ public class Card {
         this.suit = b;
     }
 
-    // todo: assign random card,
-    // todo: add check system by HashSet in other class
-
     /**
      * Return the suit of the Card
      * @return the suit value
@@ -104,10 +101,5 @@ public class Card {
                 break;
         }
         return ans;
-    }
-
-    public static void main(String[] args) {
-        Card c = new Card(2, 3);
-        System.out.println(c.toString());
     }
 }

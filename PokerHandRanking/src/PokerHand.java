@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class PokerHand {
@@ -24,7 +25,13 @@ public class PokerHand {
             this.hand[i] = moreCards[i];
         }
         this.evalHand = new Card[5];
-        this.evalHand = evalFive();
+        if (len == 5) {
+            this.evalHand = evalFive();
+        } else if (len > 5) {
+            this.evalHand = findBestHand();
+        } else {
+            throw new IllegalArgumentException("The card array argument has less than five cards");
+        }
     }
 
     /**
@@ -175,7 +182,10 @@ public class PokerHand {
                 }
             }
         }
-        evalHand = duplicateHand(sortedHandByNumber);
+        for (int i = 0; i < 5; i++) {
+            int tmpIndex = cardHM.get(i);
+            evalHand[tmpIndex] = sortedHandByNumber[i];
+        }
 
         return evalHand;
     }
@@ -307,85 +317,25 @@ public class PokerHand {
     }
 
 
-    public static void main(String[] args) {
-        Card[] ca = new Card[5];
-        ca[0] = new Card(13, 2);
-        ca[1] = new Card(11, 4);
-        ca[2] = new Card(4, 2);
-        ca[3] = new Card(10, 4);
-        ca[4] = new Card(12, 1);
-        PokerHand ph1 = new PokerHand(ca[0], ca[1], ca[2], ca[3], ca[4]);
-
-        Card[] caa = new Card[5];
-        caa[0] = new Card(3, 3);
-        caa[1] = new Card(2, 1);
-        caa[2] = new Card(14, 2);
-        caa[3] = new Card(4, 2);
-        caa[4] = new Card(5, 2);
-        PokerHand ph2 = new PokerHand(caa);
-
-        System.out.println(ph1.toString());
-        System.out.println(ph1.evalToString());
-        System.out.println(ph2.toString());
-        System.out.println(ph2.evalToString());
-        System.out.println(ph1.compareTo(ph2));
-
-
-
-        Card[] manyca = new Card[10];
-        manyca[0] = new Card(13, 2);
-        manyca[1] = new Card(11, 4);
-        manyca[2] = new Card(4, 2);
-        manyca[3] = new Card(10, 4);
-        manyca[4] = new Card(12, 1);
-        manyca[5] = new Card(12, 4);
-        manyca[6] = new Card(12, 2);
-        manyca[7] = new Card(12, 3);
-        manyca[8] = new Card(4, 1);
-        manyca[9] = new Card(11, 1);
-
-        PokerHand ph3 = new PokerHand(caa);
-
-        int[] tmp = ph3.advSortByNumber(manyca);
-
-    }
-
-    public Card[] findBestHand() {
-        int len = this.hand.length;
-
-        Card[] sortedHandBySuit = duplicateHand(this.hand);
-        int[] suitTable = this.advSortBySuit(sortedHandBySuit);
-
-        for (int i = 1; i < 5; i++) {
-            if (suitTable[i] >= 5) {
-
-            }
-        }
-
-        Card[] sortedHandByNumber = duplicateHand(this.hand);
-        this.sortByNumber(sortedHandByNumber);
-
-        return sortedHandByNumber;
-    }
-
     /**
      * Sort the card array by number, return the sort report array. <p>
-     * The index of the array is the number (rank) shown on the card, from 2 to 14;<p>
-     * the value of the array is the appearance frequency, from 0 to 4;
+     * The index of the row is the number (rank) shown on the card, from 2 to 14;<p>
+     * The first column of  is the appearance frequency, from 0 to 4;
+     * The second column of the beginning index of the number, from 0 to the length of card array;
      * @param ca the Card array to be sorted
-     * @return the integer array indicate how many cards of the same rank
+     * @return the two-dimensional integer array indicating the frequency and begin index of each number
      */
-    public int[] advSortByNumber(Card[] ca) {
+    private int[][] advSortByNumber(Card[] ca) {
         this.sortByNumber(ca);
         int len = ca.length;
-        int[] ans = new int[15];
+        int[][] ans = new int[15][2];
 
         for (int i = 0; i < len; i++) {
-            ans[ca[i].getNumber()]++;
-        }
-
-        for (int i = 0; i < 15; i++) {
-            System.out.println(i + " " + ans[i]);
+            int num = ca[i].getNumber();
+            if (ans[num][0] == 0) {
+                ans[num][1] = i;
+            }
+            ans[num][0]++;
         }
         return ans;
     }
@@ -397,13 +347,360 @@ public class PokerHand {
      * @param ca the card array to be sorted
      * @return the integer array indicating how many cards are in the same suit
      */
-    public int[] advSortBySuit(Card[] ca) {
+    private int[][] advSortBySuit(Card[] ca) {
         this.sortBySuit(ca);
         int len = ca.length;
-        int[] ans = new int[5];
+        int[][] ans = new int[5][2];
         for (int i = 0; i < len; i++) {
-            ans[ca[i].getSuit()]++;
+            int sui = ca[i].getSuit();
+            if (ans[sui][0] == 0) {
+                ans[sui][1] = i;
+            }
+            ans[sui][0]++;
         }
         return ans;
     }
+
+    /**
+     * Compare two 5-card array in the same rank; return the higher one.
+     * @param a the first 5-card array
+     * @param b the second 5-card array
+     * @return the higher ranking array. return the first array if equals.
+     */
+    private Card[] cardArrayCompare (Card[] a, Card[] b) {
+        if (a.length != 5 || b.length != 5)
+            throw new IllegalArgumentException("Not valid tmpEvalArray");
+
+        if (a[1] == null) return b;
+        for (int i = 0; i < 5; i++) {
+            if (a[i].getNumber() > b[i].getNumber()) {
+                return a;
+            } else if (a[i].getNumber() < b[i].getNumber()) {
+                return b;
+            }
+        }
+        return a; //a equals b
+    }
+
+    /**
+     * Takes 5 or more cards and returns the best 5-card array
+     * @return the 5-card array to the evalHand variable
+     */
+    public Card[] findBestHand() {
+        int len = this.hand.length;
+        rank = 1;
+
+        //Determine if Royal Flush, Straight Flush, or Flush
+        Card[] sortedHandBySuit = duplicateHand(this.hand);
+        int[][] suitTable = this.advSortBySuit(sortedHandBySuit);
+
+        Card[] tmpEvalHand = new Card[5];
+        //RoyalFLush
+        tmpEvalHand = isRoyalFlush(sortedHandBySuit, suitTable);
+        if (tmpEvalHand != null) {
+            this.rank = 10;
+            return tmpEvalHand;
+        }
+        //StraightFlush
+        tmpEvalHand = isStraightFlush(sortedHandBySuit, suitTable);
+        if (tmpEvalHand != null) {
+            this.rank = 9;
+            return tmpEvalHand;
+        }
+
+        Card[] sortedHandByNumber = duplicateHand(this.hand);
+        int[][] numTable = this.advSortByNumber(sortedHandByNumber);
+
+        //Four Of A Kind
+        tmpEvalHand = isFourOfAKind(sortedHandByNumber, numTable);
+        if (tmpEvalHand != null) {
+            this.rank = 8;
+            return tmpEvalHand;
+        }
+
+        //FullHouse
+        tmpEvalHand = isFullHouse(sortedHandByNumber, numTable);
+        if (tmpEvalHand != null) {
+            this.rank = 7;
+            return tmpEvalHand;
+        }
+
+        //Flush
+        tmpEvalHand = isFlush(sortedHandBySuit, suitTable);
+        if (tmpEvalHand != null) {
+            this.rank = 6;
+            return tmpEvalHand;
+        }
+
+        //Straight
+        tmpEvalHand = isStraight(sortedHandByNumber, numTable);
+        if (tmpEvalHand != null) {
+            this.rank = 5;
+            return tmpEvalHand;
+        }
+
+        //Three of a Kind
+        tmpEvalHand = isThreeOfAKind(sortedHandByNumber, numTable);
+        if (tmpEvalHand != null) {
+            this.rank = 4;
+            return tmpEvalHand;
+        }
+
+        //Two Pair
+        tmpEvalHand = isTwoPair(sortedHandByNumber, numTable);
+        if (tmpEvalHand != null) {
+            this.rank = 3;
+            return tmpEvalHand;
+        }
+
+        //One Pair
+        tmpEvalHand = isOnePair(sortedHandByNumber, numTable);
+        if (tmpEvalHand != null) {
+            this.rank = 2;
+            return tmpEvalHand;
+        }
+
+        //High Card
+        tmpEvalHand = Arrays.copyOfRange(sortedHandByNumber, 0, 5);
+        return tmpEvalHand;
+    }
+
+    /****************** Start of Rank Evaluation Methods *******************/
+    /**
+     * isXXX() methods Return the best five cards under the XX rank; not considering other ranks.
+     * @param sca
+     * @param numTable
+     * @return the 5-card array if this.hand is at this rank; return null if not;
+     */
+
+    private Card[] isOnePair(Card[] sca, int[][] numTable) {
+        Card[] ca = new Card[5];
+        for (int i = 14; i >= 2; i--) {
+            if (numTable[i][0] == 2) {
+                ca[0] = sca[numTable[i][1]];
+                ca[1] = sca[numTable[i][1] + 1];
+                if (numTable[i][1] == 0) { //if the pair start from the 1st position of sca
+                    ca[2] = sca[2];
+                    ca[3] = sca[3];
+                    ca[4] = sca[4];
+                } else if (numTable[i][1] == 1){ //if the pair start from the 2nd of sca
+                    ca[2] = sca[0];
+                    ca[3] = sca[3];
+                    ca[4] = sca[4];
+                } else if (numTable[i][1] == 2) { //if the pair start from the 3rd of sca
+                    ca[2] = sca[0];
+                    ca[3] = sca[1];
+                    ca[4] = sca[4];
+                } else { //if the pair start from of after the 4th element of sca
+                    ca[2] = sca[0];
+                    ca[3] = sca[1];
+                    ca[4] = sca[2];
+                }
+                return ca;
+            }
+        }
+        return null;
+    }
+
+    private Card[] isTwoPair(Card[] sca, int[][] numTable) {
+        Card[] ca = new Card[5];
+        int firstPairIdx = -1, secondPairIdx = -1; //Set the indexes of first and second pairs
+        for (int i = 14; i >= 2; i--) {
+            if (firstPairIdx == -1 && numTable[i][0] == 2) {
+                firstPairIdx = numTable[i][1];
+            } else if (secondPairIdx == -1 && numTable[i][0] == 2) {
+                secondPairIdx = numTable[i][1];
+                break; //if find two pairs, break the loop
+            }
+        }
+        if (firstPairIdx == -1 || secondPairIdx == -1)
+            return null;
+        else {
+            ca[0] = sca[firstPairIdx];
+            ca[1] = sca[firstPairIdx + 1];
+            ca[2] = sca[secondPairIdx];
+            ca[3] = sca[secondPairIdx + 1];
+            for (int i = 0; i < 5; i++) {
+                if (i != firstPairIdx && i != firstPairIdx + 1 && i != secondPairIdx && i != secondPairIdx + 1) {
+                    ca[4] = sca[i];
+                    return ca;
+                }
+            }
+            throw new IllegalArgumentException("Didn't find the 5th card in evalHand in isTwoPair()");
+        }
+    }
+
+    private Card[] isThreeOfAKind(Card[] sca, int[][] numTable) {
+        Card[] ca = new Card[5];
+        for (int i = 14; i >= 2; i--) {
+            if (numTable[i][0] == 3) {
+                ca[0] = sca[numTable[i][1]];
+                ca[1] = sca[numTable[i][1] + 1];
+                ca[2] = sca[numTable[i][1] + 2];
+                if (numTable[i][1] == 0) { //if the triple start from of beginning of sca
+                    ca[3] = sca[3];
+                    ca[4] = sca[4];
+                } else if (numTable[i][1] == 1){ //if the triple start from the 2nd of sca
+                    ca[3] = sca[0];
+                    ca[4] = sca[4];
+                } else { //if the triple start from or after the 3rd element of sca
+                    ca[3] = sca[0];
+                    ca[4] = sca[1];
+                }
+                return ca;
+            }
+        }
+        return null;
+    }
+
+    private Card[] isStraight(Card[] sca, int[][] numTable) {
+        Card[] ca = new Card[5];
+        for (int i = 14; i - 4 >= 2; i--) {
+            if (numTable[i][0] > 0 && numTable[i - 1][0] > 0 && numTable[i - 2][0] > 0
+                                   && numTable[i - 3][0] > 0 && numTable[i - 4][0] > 0) {
+                ca[0] = sca[numTable[i][1]];
+                ca[1] = sca[numTable[i - 1][1]];
+                ca[2] = sca[numTable[i - 2][1]];
+                ca[3] = sca[numTable[i - 3][1]];
+                ca[4] = sca[numTable[i - 4][1]];
+                return ca;
+            }
+        }
+        if (numTable[5][0] > 0 && numTable[14][0] > 0 && numTable[4][0] > 0
+                && numTable[3][0] > 0 && numTable[2][0] > 0) {
+            ca[0] = sca[numTable[5][1]];
+            ca[1] = sca[numTable[4][1]];
+            ca[2] = sca[numTable[3][1]];
+            ca[3] = sca[numTable[2][1]];
+            ca[4] = sca[numTable[14][1]];
+            return ca;
+        }
+        return null;
+    }
+
+    private Card[] isFlush(Card[] sca, int[][] suitTable) {
+        Card[] ca = new Card[5];
+        for (int i = 1; i < 5; i++) {
+            if (suitTable[i][0] >= 5) {
+                Card[] tmp = new Card[5];
+                int beginIdx = suitTable[i][1];
+                tmp[0] = sca[beginIdx];
+                tmp[1] = sca[beginIdx + 1];
+                tmp[2] = sca[beginIdx + 2];
+                tmp[3] = sca[beginIdx + 3];
+                tmp[4] = sca[beginIdx + 4];
+                ca = cardArrayCompare(ca, tmp);
+            }
+        }
+        if (ca[1] == null)
+            return null;
+        else {
+            return ca;
+        }
+    }
+
+    private Card[] isFullHouse(Card[] sca, int[][] numTable) {
+        Card[] ca = new Card[5];
+        int tripleIdx = -1, pairIdx = -1; //Set the first card index of the triple and pair
+        for (int i = 14; i >= 2; i--) {
+            if (tripleIdx == -1 && numTable[i][0] == 3) {
+                tripleIdx = numTable[i][1]; //get the first triple cards
+            }
+            if (pairIdx == -1 && numTable[i][0] == 2) {
+                pairIdx = numTable[i][1]; //get the first pair cards
+            }
+            if (pairIdx != -1 && tripleIdx != -1)
+                break;
+        }
+        if (tripleIdx == -1 || pairIdx == -1)
+            return null;
+        else {
+            ca[0] = sca[tripleIdx];
+            ca[1] = sca[tripleIdx + 1];
+            ca[2] = sca[tripleIdx + 2];
+            ca[3] = sca[pairIdx];
+            ca[4] = sca[pairIdx + 1];
+            return ca;
+        }
+    }
+
+    private Card[] isFourOfAKind(Card[] sca, int[][] numTable) {
+        Card[] ca = new Card[5];
+        for (int i = 14; i >= 2; i--) {
+            if (numTable[i][0] == 4) {
+                ca[0] = sca[numTable[i][1]];
+                ca[1] = sca[numTable[i][1] + 1];
+                ca[2] = sca[numTable[i][1] + 2];
+                ca[3] = sca[numTable[i][1] + 3];
+                //the last card should be the 1st or the 5th card in the sorted array sca
+                if (numTable[i][1] == 0)
+                    ca[4] = sca[4];
+                else
+                    ca[4] = sca[0];
+                return ca;
+            }
+        }
+        return null;
+    }
+
+    private Card[] isStraightFlush(Card[] sca, int[][] suitTable) {
+        Card[] straightFlushEvalArray = new Card[5];
+        for (int i = 1; i < 5; i++) {
+            if (suitTable[i][0] >= 5) {
+                //flushCA are cards in same suit and sorted in descending order. No duplicated cards.
+                Card[] flushCA = Arrays.copyOfRange(sca,
+                        suitTable[i][1],
+                        suitTable[i][1] + suitTable[i][0]);
+                int len = suitTable[i][0];
+
+                if (straightFlushEvalArray[1] == null //if no other flush found, use this smallest straight flush
+                        && flushCA[0].getNumber() == 14
+                        && flushCA[len - 1].getNumber() == 2
+                        && flushCA[len - 1].getNumber() + 3 == flushCA[len - 4].getNumber()) {
+                    straightFlushEvalArray[0] = flushCA[len - 4];
+                    straightFlushEvalArray[1] = flushCA[len - 3];
+                    straightFlushEvalArray[2] = flushCA[len - 2];
+                    straightFlushEvalArray[3] = flushCA[len - 1];
+                    straightFlushEvalArray[4] = flushCA[0];
+                } else {
+                    for (int j = 0; j + 4 < len; j++) {
+                        if (flushCA[j].getNumber() == flushCA[j + 4].getNumber() + 4) {
+                            Card[] tmpEvalArray = new Card[5];
+                            tmpEvalArray[0] = flushCA[j];
+                            tmpEvalArray[1] = flushCA[j + 1];
+                            tmpEvalArray[2] = flushCA[j + 2];
+                            tmpEvalArray[3] = flushCA[j + 3];
+                            tmpEvalArray[4] = flushCA[j + 4];
+                            straightFlushEvalArray = cardArrayCompare(straightFlushEvalArray, tmpEvalArray);
+                        }
+                    }
+                }
+
+            }
+        }
+        if (straightFlushEvalArray[1] == null)
+            return null;
+        else {
+            return straightFlushEvalArray;
+        }
+    }
+
+    private Card[] isRoyalFlush(Card[] sortedHandBySuit, int[][] suitTable) {
+        for (int i = 1; i < 5; i++) {
+            if (suitTable[i][0] >= 5) {
+                //The idx card and following 4 cards in same suit and sorted in descending order. No duplicated cards.
+                int idx = suitTable[i][1];
+                if (sortedHandBySuit[idx].getNumber() == 14
+                        && sortedHandBySuit[idx].getNumber() - 4 == sortedHandBySuit[idx + 4].getNumber()) {
+                    return Arrays.copyOfRange(sortedHandBySuit, idx, idx + 5);
+                }
+            }
+        }
+        return null;
+    }
+
+    /****************** End of Rank Evaluation Methods *******************/
+
+
+
 }

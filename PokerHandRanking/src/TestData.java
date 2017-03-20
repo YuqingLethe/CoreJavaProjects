@@ -89,6 +89,7 @@ public class TestData {
 
 
     public Card[] getCardArray3() {
+
         Card[] manyca = new Card[10];
         manyca[0] = new Card(13, 2);
         manyca[1] = new Card(11, 4);
@@ -101,8 +102,6 @@ public class TestData {
         manyca[8] = new Card(4, 1);
         manyca[9] = new Card(11, 1);
 
-        PokerHand ph3 = new PokerHand(manyca);
-
         return manyca;
     }
 
@@ -110,5 +109,37 @@ public class TestData {
         Card[] ca = getCardArray3();
         PokerHand ph3 = new PokerHand(ca);
         return ph3;
+    }
+
+    public JSONArray getJsonArray4() {
+        // ["8H", "4C", "4S", "JC", "10D"];
+        JSONArray ja = new JSONArray();
+        ja.add("8H");
+        ja.add("4C");
+        ja.add("4S");
+        ja.add("JC");
+        ja.add("10D");
+        return ja;
+    }
+    public Card[] getCardArray4() {
+        // ["8H", "4C", "4S", "JC", "10D"];
+        Card[] ca = new Card[5];
+        ca[0] = new Card(8, 1);
+        ca[1] = new Card(4, 2);
+        ca[2] = new Card(4, 4);
+        ca[3] = new Card(11, 2);
+        ca[4] = new Card(10, 3);
+        return ca;
+    }
+
+    /**
+     * One Pair
+     * @return
+     */
+    public PokerHand getPokerHand4() {
+        // ["8H", "4C", "4S", "JC", "10D"];
+        Card[] ca = getCardArray4();
+        PokerHand ph = new PokerHand(ca);
+        return ph;
     }
 }
