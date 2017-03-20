@@ -1,8 +1,5 @@
 import org.json.simple.JSONArray;
 
-/**
- * Created by yuqing on 3/18/17.
- */
 public class TestData {
 
     public JSONArray getJsonArray0() {
@@ -82,14 +79,25 @@ public class TestData {
     public PokerHand getPokerHand2() {
         // ["JH", "4C", "4S", "JC", "10D"];
         Card[] ca = getCardArray2();
-        PokerHand ph = new PokerHand(ca);
-        return ph;
+        return new PokerHand(ca);
     }
 
-
+    public JSONArray getJsonArray3() {
+        JSONArray ja = new JSONArray();
+        ja.add("KC");
+        ja.add("JS");
+        ja.add("4C");
+        ja.add("10S");
+        ja.add("QH");
+        ja.add("QS");
+        ja.add("QC");
+        ja.add("QD");
+        ja.add("4H");
+        ja.add("JH");
+        return ja;
+    }
 
     public Card[] getCardArray3() {
-
         Card[] manyca = new Card[10];
         manyca[0] = new Card(13, 2);
         manyca[1] = new Card(11, 4);
@@ -101,7 +109,6 @@ public class TestData {
         manyca[7] = new Card(12, 3);
         manyca[8] = new Card(4, 1);
         manyca[9] = new Card(11, 1);
-
         return manyca;
     }
 
@@ -132,14 +139,9 @@ public class TestData {
         return ca;
     }
 
-    /**
-     * One Pair
-     * @return
-     */
     public PokerHand getPokerHand4() {
         // ["8H", "4C", "4S", "JC", "10D"];
         Card[] ca = getCardArray4();
-        PokerHand ph = new PokerHand(ca);
-        return ph;
+        return new PokerHand(ca);
     }
 }

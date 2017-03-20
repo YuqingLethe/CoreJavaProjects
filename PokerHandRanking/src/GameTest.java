@@ -1,6 +1,5 @@
 import org.json.simple.JSONArray;
 import org.junit.Test;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
@@ -85,6 +84,113 @@ public class GameTest {
         String ans = g.fiveCards(ja);
 
         assertEquals("Test Data Set 0: Test of fiveCard() passed", stringExp, ans);
+    }
+
+    @Test
+    public void fiveCards2() throws Exception {
+        JSONArray ja = new JSONArray();
+        ja.add("8H");
+        ja.add("4L"); //invalid suit
+        ja.add("4S");
+        ja.add("JC");
+        ja.add("10D");
+        Game g = new Game();
+        String exp = "Not recognized suit in the card with index of 1";
+        try {
+            g.fiveCards(ja);
+        } catch (IllegalArgumentException e) {
+            assertEquals(exp, e.getMessage());
+        }
+    }
+
+    @Test
+    public void fiveCards3() throws Exception {
+        JSONArray ja = new JSONArray();
+        ja.add("8H");
+        ja.add("1H"); //invalid number
+        ja.add("4S");
+        ja.add("JC");
+        ja.add("10D");
+        Game g = new Game();
+        String exp = "Not recognized number in the card with index of 1";
+        try {
+            g.fiveCards(ja);
+        } catch (IllegalArgumentException e) {
+            assertEquals(exp, e.getMessage());
+        }
+    }
+
+    @Test
+    public void fiveCards4() throws Exception {
+        JSONArray ja = new JSONArray();
+        ja.add("8H");
+        ja.add("8H"); //duplicated card
+        ja.add("4S");
+        ja.add("JC");
+        ja.add("10D");
+        Game g = new Game();
+        String exp = "The existed card with index of 1";
+        try {
+            g.fiveCards(ja);
+        } catch (IllegalArgumentException e) {
+            assertEquals(exp, e.getMessage());
+        }
+    }
+
+    @Test
+    public void fiveCards5() throws Exception {
+        JSONArray ja = new JSONArray();
+        ja.add("8H");
+        ja.add("7H");
+        ja.add("4S");
+        ja.add("JC"); //Less than 5 cards
+        Game g = new Game();
+        String exp = "The number of cards should be at least 5 and less than 53";
+        try {
+            g.fiveCards(ja);
+        } catch (IllegalArgumentException e) {
+            assertEquals(exp, e.getMessage());
+        }
+    }
+
+    @Test
+    public void compareManyHandsTest() throws Exception {
+        System.out.println("============ Test compareManyHands() =========");
+        TestData td = new TestData();
+        JSONArray ja1 = td.getJsonArray0();
+        JSONArray ja2 = td.getJsonArray2();
+        JSONArray ja4 = td.getJsonArray4();
+        System.out.println(ja1.toString());
+        System.out.println(ja2.toString());
+        System.out.println(ja4.toString());
+
+        Game g  = new Game();
+        JSONArray[] jaa = new JSONArray[3];
+        jaa[0] = ja1; jaa[1] = ja2; jaa[2] = ja4;
+        System.out.println(g.compareManyHands(jaa));
+    }
+
+    @Test
+    public void compareTwoHandsTest() throws Exception {
+        System.out.println("============ Test compareTwoHands() =========");
+        TestData td = new TestData();
+        JSONArray ja1 = td.getJsonArray0();
+        JSONArray ja2 = td.getJsonArray2();
+        System.out.println(ja1.toString());
+        System.out.println(ja2.toString());
+
+        Game g  = new Game();
+        System.out.println(g.compareTwoHands(ja1, ja2));
+    }
+    @Test
+    public void returnBestFiveCardHandTest() throws Exception {
+        TestData td = new TestData();
+        JSONArray ja1 = td.getJsonArray3();
+
+        Game g  = new Game();
+        String ans = g.returnBestFiveCardHand(ja1);
+        String exp = td.getPokerHand3().evalToString();
+        assertEquals("returnBestFiveCardHand() test ", exp, ans);
     }
 
 }

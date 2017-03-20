@@ -1,5 +1,7 @@
 import org.json.simple.JSONArray;
 
+import java.util.HashSet;
+
 
 public class Game {
     /**
@@ -16,7 +18,7 @@ public class Game {
      * Takes two 5-card hands and determines the winner. (Task #2)
      * @param ja1 the first 5-card hand
      * @param ja2 the second 5-card hand
-     * @return the string of the result and evaluation cards
+     * @return the string of the result and evaluation information
      */
     public String compareTwoHands(JSONArray ja1, JSONArray ja2) {
         String ans = "";
@@ -34,6 +36,12 @@ public class Game {
         ans += ph2.evalToString() + "\n";
         return ans;
     }
+
+    /**
+     * Takes 5-card hands JSONArray array and determines the winner. (Task #2)
+     * @param jaa the array of JSONArray
+     * @return the index of the winner hand and the evaluation information
+     */
     public String compareManyHands(JSONArray[] jaa) {
         PokerHand highest = this.jsonArrayToPokerHand(jaa[0]);
         int highestIndex = 0;
@@ -44,12 +52,32 @@ public class Game {
                 highestIndex = i;
             }
         }
-        String ans = "The i " + "th hand ranks highest: ";
+        String ans = "The " + (highestIndex + 1) + "th hand ranks highest: ";
         ans += highest.evalToString();
         return ans;
     }
 
+    /**
+     * Takes 5 or more cards and returns the best 5-card hand that can be made with those cards. (Task #3)
+     * @param ja the JSONArray
+     * @return the evaluation information of the best 5 cards.
+     */
+    public String returnBestFiveCardHand(JSONArray ja) {
+        PokerHand ph = this.jsonArrayToPokerHand(ja);
+        return ph.evalToString();
+    }
+
+    /**
+     * Validate input as JSONArray and return them as PokerHand; Throw errors if illegal card found.
+     * @param ja JSONArray input
+     * @return PokerHand built from the argument
+     */
     private PokerHand jsonArrayToPokerHand(JSONArray ja) {
+        validateDuplicatedCard(ja);
+
+        if (ja.size() < 5 || ja.size() > 52)
+            throw new IllegalArgumentException("The number of cards should be at least 5 and less than 53");
+
         Object[] oa = ja.toArray();
         Card[] ca = new Card[oa.length];
 
@@ -81,7 +109,7 @@ public class Game {
                             num = 14;
                             break;
                         default:
-                            System.out.println("Not recognized number in the " + i + "th card.");
+                            throw new IllegalArgumentException("Not recognized number of the card with index of " + i);
                     }
                 }
             }
@@ -100,8 +128,8 @@ public class Game {
                     sui = 4;
                     break;
                 default:
-                    System.out.println("Not recognized suit in the " + i + "th card.");
-            };
+                    throw new IllegalArgumentException("Not recognized suit in the card with index of " + i);
+            }
 
             ca[i] = new Card(num, sui);
         }
@@ -109,18 +137,21 @@ public class Game {
         return ph;
     }
 
-    public static void main(String[] args) {
-        TestData td = new TestData();
-        JSONArray ja1 = td.getJsonArray0();
-        JSONArray ja2 = td.getJsonArray2();
-        JSONArray ja4 = td.getJsonArray4();
-        System.out.println(ja1.toString());
-        System.out.println(ja2.toString());
-        System.out.println(ja4.toString());
+    /**
+     * Check if duplicated card existed in JSONArray input
+     * @param ja the input as JSONArray
+     */
+    private void validateDuplicatedCard (JSONArray ja) {
+        Object[] oa = ja.toArray();
 
-        Game g  = new Game();
-        JSONArray[] jaa = new JSONArray[3];
-        jaa[0] = ja1; jaa[1] = ja2; jaa[2] = ja4;
-        System.out.println(g.compareManyHands(jaa));
+        HashSet<Object> hs = new HashSet<>();
+        for (int i = 0; i < oa.length; i++) {
+            if (hs.contains(oa[i])) {
+                throw new IllegalArgumentException("The existed card with index of " + i);
+            } else {
+                hs.add(oa[i]);
+            }
+        }
     }
+
 }
